@@ -1,19 +1,22 @@
 function countdown() {
-  // Target date and time
-  const targetDate = new Date("2026-02-28T17:15:00");
+  // Contract start and end dates
+  const startDate = new Date("2024-02-29T00:00:00");
+  const endDate = new Date("2026-02-28T17:15:00");
   const adelaideTimeZone = "Australia/Adelaide";
 
   function updateCountdown() {
     const now = new Date();
-    const timeDifference = targetDate - now;
 
+    // Time calculations for countdown
+    const timeDifference = endDate - now;
     if (timeDifference <= 0) {
       document.getElementById("time").innerHTML = "Time's up!";
+      document.getElementById("percentage").innerHTML =
+        "100% through the contract";
       clearInterval(interval);
       return;
     }
 
-    // Time calculations for months, days, hours, minutes, and seconds
     const months = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 30));
     const weeks = Math.floor(
       (timeDifference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7)
@@ -29,10 +32,22 @@ function countdown() {
     );
     const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
-    // Display the result
+    // Calculate the percentage of the contract elapsed
+    const totalContractTime = endDate - startDate;
+    const elapsedTime = now - startDate;
+    const percentageElapsed = (elapsedTime / totalContractTime) * 100;
+
+    // Display the countdown
     document.getElementById(
       "time"
     ).innerHTML = `${months} months, ${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+
+    // Display the percentage through the contract
+    document.getElementById(
+      "percentage"
+    ).innerHTML = `Percentage through: ${percentageElapsed.toFixed(
+      2
+    )}%`;
   }
 
   // Update the countdown every second
