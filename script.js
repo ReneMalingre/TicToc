@@ -11,8 +11,7 @@ function countdown() {
     const timeDifference = endDate - now;
     if (timeDifference <= 0) {
       document.getElementById("time").innerHTML = "Time's up!";
-      document.getElementById("percentage").innerHTML =
-        "100% through the contract";
+      document.getElementById("percentage").innerHTML = "100% through!";
       clearInterval(interval);
       return;
     }
@@ -38,16 +37,22 @@ function countdown() {
     const percentageElapsed = (elapsedTime / totalContractTime) * 100;
 
     // Display the countdown
-    document.getElementById(
-      "time"
-    ).innerHTML = `${months} months, ${weeks} weeks, ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+    let innerHTML = "";
+    if (months > 0) {
+      innerHTML += `${months} mths, `;
+    }
+    if (weeks > 0) {
+      innerHTML += `${weeks} wks, `;
+    }
+
+    innerHTML += `${days} days, ${hours} hours, ${minutes} min, ${seconds} sec`;
+
+    document.getElementById("time").innerHTML = innerHTML;
 
     // Display the percentage through the contract
     document.getElementById(
       "percentage"
-    ).innerHTML = `Percentage through: ${percentageElapsed.toFixed(
-      2
-    )}%`;
+    ).innerHTML = `Through: ${percentageElapsed.toFixed(2)}%`;
   }
 
   // Update the countdown every second
