@@ -1,51 +1,76 @@
+// Extend Day.js with the necessary plugins
+dayjs.extend(dayjs_plugin_utc);
+dayjs.extend(dayjs_plugin_timezone);
+dayjs.extend(dayjs_plugin_isSameOrAfter);
+
 function countdown() {
-  // Contract start and end dates
-  const startDate = new Date("2024-02-29T00:00:00");
-  const endDate = new Date("2026-02-28T17:15:00");
-  const adelaideTimeZone = "Australia/Adelaide";
+  // Contract start date: 9:00 am, 29th February 2024 in Adelaide, South Australia
+  const contractStartDate = dayjs.tz("2024-02-29 09:00", "Australia/Adelaide");
+
+  // Contract end date: 5:15 pm, 28th February 2026 in Adelaide, South Australia
+  const endDate = dayjs.tz("2026-02-28 17:15", "Australia/Adelaide");
 
   function updateCountdown() {
-    const now = new Date();
+    // Get current time in Adelaide
+    const now = dayjs.tz(dayjs(), "Australia/Adelaide");
 
-    // Time calculations for countdown
-    const timeDifference = endDate - now;
-    if (timeDifference <= 0) {
+    if (now.isSameOrAfter(endDate)) {
       document.getElementById("time").innerHTML = "Time's up!";
       document.getElementById("percentage").innerHTML = "100% through!";
       clearInterval(interval);
       return;
     }
 
-    const months = Math.floor(timeDifference / (1000 * 60 * 60 * 24 * 30));
-    const weeks = Math.floor(
-      (timeDifference % (1000 * 60 * 60 * 24 * 30)) / (1000 * 60 * 60 * 24 * 7)
+    // Calculate the remaining time
+    const years = endDate.diff(now, "year");
+    const months = endDate.diff(now.add(years, "year"), "month");
+    const days = endDate.diff(
+      now.add(years, "year").add(months, "month"),
+      "day"
     );
-    const days = Math.floor(
-      (timeDifference % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24)
+
+    // Calculate the number of full weeks and remaining days
+    const weeks = Math.floor(days / 7);
+    const remainingDays = days % 7;
+
+    const hours = endDate.diff(
+      now.add(years, "year").add(months, "month").add(days, "day"),
+      "hour"
     );
-    const hours = Math.floor(
-      (timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    const minutes = endDate.diff(
+      now
+        .add(years, "year")
+        .add(months, "month")
+        .add(days, "day")
+        .add(hours, "hour"),
+      "minute"
     );
-    const minutes = Math.floor(
-      (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+    const seconds = endDate.diff(
+      now
+        .add(years, "year")
+        .add(months, "month")
+        .add(days, "day")
+        .add(hours, "hour")
+        .add(minutes, "minute"),
+      "second"
     );
-    const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
 
     // Calculate the percentage of the contract elapsed
-    const totalContractTime = endDate - startDate;
-    const elapsedTime = now - startDate;
+    const totalContractTime = endDate.diff(contractStartDate);
+    const elapsedTime = now.diff(contractStartDate);
     const percentageElapsed = (elapsedTime / totalContractTime) * 100;
 
-    // Display the countdown
+    // Display the countdown with singular/plural terms
     let innerHTML = "";
-    if (months > 0) {
-      innerHTML += `${months} mths, `;
-    }
-    if (weeks > 0) {
-      innerHTML += `${weeks} wks, `;
-    }
-
-    innerHTML += `${days} days, ${hours} hours, ${minutes} min, ${seconds} sec`;
+    if (years > 0) innerHTML += `${years} year${years > 1 ? "s" : ""}, `;
+    if (months > 0) innerHTML += `${months} month${months > 1 ? "s" : ""}, `;
+    if (weeks > 0) innerHTML += `${weeks} week${weeks > 1 ? "s" : ""}, `;
+    if (remainingDays > 0)
+      innerHTML += `${remainingDays} day${remainingDays > 1 ? "s" : ""}, `;
+    if (hours > 0) innerHTML += `${hours} hour${hours > 1 ? "s" : ""}, `;
+    if (minutes > 0)
+      innerHTML += `${minutes} minute${minutes > 1 ? "s" : ""}, `;
+    innerHTML += `${seconds} second${seconds > 1 ? "s" : ""}`;
 
     document.getElementById("time").innerHTML = innerHTML;
 
