@@ -34,7 +34,7 @@ function countdown() {
     // Calculate the number of full weeks and remaining days
     const weeks = Math.floor(days / 7);
     const weeksToGo = Math.floor(daysTotal / 7);
-    const remainingDays = days % 7;
+    const remainingDays = daysTotal - weeksToGo * 7;
 
     const hours = endDate.diff(
       now.add(years, "year").add(months, "month").add(days, "day"),
