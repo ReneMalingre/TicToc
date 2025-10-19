@@ -17,6 +17,7 @@ function countdown() {
     if (now.isSameOrAfter(endDate)) {
       document.getElementById("time").innerHTML = "Time's up!";
       document.getElementById("percentage").innerHTML = "100% through!";
+      document.getElementById("weeksToGo").innerHTML = "You are free!";
       clearInterval(interval);
       return;
     }
@@ -28,9 +29,11 @@ function countdown() {
       now.add(years, "year").add(months, "month"),
       "day"
     );
+    const daysTotal = endDate.diff(now, "day");
 
     // Calculate the number of full weeks and remaining days
     const weeks = Math.floor(days / 7);
+    const weeksToGo = Math.floor(daysTotal / 7);
     const remainingDays = days % 7;
 
     const hours = endDate.diff(
@@ -74,6 +77,9 @@ function countdown() {
 
     document.getElementById("time").innerHTML = innerHTML;
 
+    document.getElementById(
+      "weeksToGo"
+    ).innerHTML = `${weeksToGo} weeks, ${remainingDays} days to go`;
     // Display the percentage through the contract
     document.getElementById(
       "percentage"
